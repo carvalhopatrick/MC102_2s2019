@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<!-- saved from url=(0056)https://www.ic.unicamp.br/~mc102/labs/roteiro-lab09.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    
+    <title>MC102 - Lab09</title>
+
+    <link rel="stylesheet" type="text/css" href="./MC102 - Lab09_files/2s2019-mc102.css">
+
+  </head>
+
+<body class="vsc-initialized">
+
+<header>
+    MC102 - Algoritmos e Programação de Computadores
+</header>
+
+<div class="topnav">
+  <a href="https://www.ic.unicamp.br/~mc102/index.html"><b>MC102</b></a>
+  <a href="https://www.ic.unicamp.br/~mc102/horarios.html"><b>Horários</b></a>
+  <a href="https://www.ic.unicamp.br/~mc102/pdd.html"><b>Plano de<br>desenvolvimento</b></a>
+  <a href="https://www.ic.unicamp.br/~mc102/plano.html"><b>Plano de<br>aulas</b></a>          
+  <a href="https://www.ic.unicamp.br/~mc102/oferecimentos.html"><b>Oferecimentos<br>anteriores</b></a>
+</div>
+
+<h1>Caça-Palavras</h1>
+
+<p>Nesta tarefa trabalharemos com estruturas bidimencionais e dicionários em Python utilizando como tema o passatempo de buscar palavras em um diagrama.</p>
+
+<p><b>Em 08/outubro, às 11h00, foram alterados os testes 7, 9 e 10 (fechado). Veja a nova versão do arquivo <a href="https://www.ic.unicamp.br/~mc102/labs/aux09.zip">aux09.zip</a>.</b> As notas obtidas em submissões com os testes anteriores continuarão válidas.</p>
+  
+<h2>Descrição da entrada</h2>
+
+<p>As primeiras linhas da entrada conterão um diagrama com letras minúsculas separadas por espaços em branco. A próxima linha indicará o número de palavras a serem procuradas. Em seguida, cada linha conterá uma palavra. Observe o exemplo abaixo:</p>
+
+<pre><code>g z h y z l y n s g q j u
+i n w a k b n x w w t n y
+i w o u i p o f d b o y o
+m k o h k l h r k h j w u
+j l i o t r t c t b c o p
+a h e d n y y y e g t p t
+f n o h t y p y t h o n f
+r l q o s y y y h n a f x
+c e z x t k t m t x e u z
+t g m h c v h x c h j n a
+s n o w t q o b v n o z j
+u n u x x a n p u i g n b
+s i x o d j v s f e o n z
+1
+python</code></pre>
+
+<p>Note que as palavras poderão estar dispostas horizontalmente, verticalmente ou em diagonal. Cada
+palavra poderá ocorrer zero ou mais vezes no diagrama. Uma palavra poderá aparecer mais de uma vez na lista de palavras a serem procuradas.</p>
+
+<h2>Descrição da saída</h2>
+
+<p>O diagrama de saída conterá as palavras encontradas nas suas respectivas posições e
+  caracteres <code>"."</code> nas demais posições. Em seguida, deverão ser apresentadas, em ordem alfabética, cada uma das palavras solicitadas acompanhada do número de vezes em que foram encontradas no diagrama. Cada palavra deve aparecer apenas uma vez na saída, mesmo que tenha aparecido várias vezes na entrada. Observe a saída esperada para o exemplo acima:</p>
+  
+<pre><code>. . . . . . . . . . . . .
+. n . . . . n . . . . n .
+. . o . . . o . . . o . .
+. . . h . . h . . h . . .
+. . . . t . t . t . . . .
+. . . . . y y y . . . . .
+. n o h t y p y t h o n .
+. . . . . y y y . . . . .
+. . . . t . t . t . . . .
+. . . h . . h . . h . . .
+. . o . . . o . . . o . .
+. n . . . . n . . . . n .
+. . . . . . . . . . . . .
+python: 8</code></pre>
+
+<h2>Testes com o SuSy</h2>
+
+<p>O conjunto de testes será formado por 9 testes abertos e 1 teste fechado. A tabela abaixo mostra os diagramas de saída (sem a frequência das palavras) e resume as características principais destes testes, de maneira a facilitar o desenvolvimento e depuração do seu programa.</p>
+
+<table>
+  <tbody><tr>
+    <th>Teste</th><th>Diagrama</th><th>Características</th>
+  </tr>
+  <tr>
+    <th style="background-color:#333333">arq1.in</th>
+    <td><code style="font-size:100%"><pre>. . . . . . . . . . .
+. a l g o r i t m o .
+. . . . . . . . . . .</pre></code></td>
+    <td>• Apenas uma palavra na horizontal. 
+    </td>
+  </tr>
+  <tr>
+    <th style="background-color:gray">arq2.in</th>
+    <td><code style="font-size:100%"><pre>. . . i n t r o d u c a o
+. . . . . . . . . . . . .
+a l g o r i t m o . . . .
+. . . . . . . . . . . . .
+. . . . . p r o g r a m a
+. . . . . . . . . . . . .</pre></code></td>    
+    <td>• Três palavras na horizontal.<br>
+      • Palavras com letras próximas às bordas do diagrama.<br>
+      • Presença de palavra incompleta no diagrama.      
+    </td>
+  </tr>    
+  <tr>
+    <th style="background-color:#333333">arq3.in</th>
+    <td><code style="font-size:100%"><pre>. . . . . . . . . . .
+. . . . . . . . . . .
+. . i n v e r s o . .
+. . . . . . . . . . .
+. . o s r e v n i . .
+. . . . . . . . . . .
+. . . . . . . . . . .</pre></code></td>    
+    <td>• Apenas uma palavra, com duas ocorrências.<br>
+      • Posição horizontal, da esquerda para direita.<br>
+      • Posição horizontal, da direita para esquerda.
+    </td>
+  </tr>
+  <tr>
+    <th style="background-color:gray">arq4.in</th>
+    <td><code style="font-size:100%"><pre>. . . . v
+. p . . e
+. a . . r
+. l . . t
+. a . . i
+. v . . c
+. r . . a
+. a . . l
+. s . . .</pre></code></td>
+    <td>• Palavras na vertical.<br>
+      • Palavras com letras próximas às bordas do diagrama.<br>
+      • Presença de palavra incompleta no diagrama.<br>
+      • Pedido de busca de palavra inexistente no diagrama.            
+    </td>
+   </tr>
+   <tr>
+    <th style="background-color:#333333">arq5.in</th>
+    <td><code style="font-size:90%"><pre>. . . . . . . . . .
+. . . . . . . . n .
+. . . . . . . . o .
+. . . . . . . . h .
+. . . . . . . . t .
+. . . . . . . . y .
+. a m a r g o r p .
+. . . . . . . . . .</pre></code></td>
+    <td>• Uma palavra na vertical, de baixo para cima.<br>
+      • Uma palavra na horizontal, da direita para esquerda.<br>
+      • Palavras compartilhando a mesma letra.
+    </td>    
+   </tr>
+   <tr>
+     <th style="background-color:gray">arq6.in</th>
+     <td><code style="font-size:90%"><pre>. . . . . . . l
+. . . . . . a .
+. . . . . n . .
+. . . . o . . .
+. . . g . . . .
+. . a . . . . .
+. i . . . . . .
+d . . . . . . .</pre></code></td>
+     <td>• Palavra na diagonal principal.<br>
+      • Presença de palavras incompletas no diagrama.<br>
+     </td>
+   </tr>
+   <tr>
+    <th style="background-color:#333333">arq7.in</th>
+    <td><code style="font-size:90%"><pre>d . . . . . . d
+. i . . . . i .
+. . a . . a . .
+. . . g g . . .
+. . . o o . . .
+. . n . . n . .
+. a . . . . a .
+l . . . . . . l</pre></code></td>
+    <td>• Uma palavra na diagonal secundária, de cima para baixo e da esquerda para direita.<br>
+      • Uma palavra na diagonal principal, de baixo para cima e da direita para esquerda.<br>
+      • Pedido de busca de palavras inexistentes no diagrama.<br>
+      • Pedido da mesma palavra mais de uma vez.                        
+    </td>
+   </tr>    
+   <tr>
+     <th style="background-color:gray">arq8.in</th>
+    <td><code style="font-size:75%"><pre>. . . . . . . . . . . . .
+. n . . . . n . . . . n .
+. . o . . . o . . . o . .
+. . . h . . h . . h . . .
+. . . . t . t . t . . . .
+. . . . . y y y . . . . .
+. n o h t y p y t h o n .
+. . . . . y y y . . . . .
+. . . . t . t . t . . . .
+. . . h . . h . . h . . .
+. . o . . . o . . . o . .
+. n . . . . n . . . . n .
+. . . . . . . . . . . . .</pre></code></td>
+     <td>• Exemplo desta tarefa, palavra <code>python</code> em todas as direções.
+     </td>
+   </tr>
+   <tr>
+     <th style="background-color:gray">arq9.in</th>
+    <td><code style="font-size:75%"><pre>n . . . . s . . . . . . . d
+. o . . . a t s i l . . . e
+. . h . . . . r . . . . . b
+. . . t . . . . i . . . . u
+. . . . y . . . . n . . . g
+. . . t u p l a . . g . . n
+. . . . . . a . . . . . . i
+. . . . l . . m . . . . . r
+. . . o . . . . a . . . . t
+t . o . . . . . . r . . . s
+a p . . . . . . . . g . . .
+o . . a l g o r i t m o . .
+l . . . . . . . . . . . r .
+f . i n t . . . . . . . . p</pre></code></td>
+     <td>• Teste com várias palavras e casos contemplados nos outros testes.</td>
+   </tr>
+     <tr><th style="background-color:gray">arq10.in</th>
+  <td></td>
+  <td>• Teste fechado.<br>
+    • Semelhante ao teste 9 (mesmo diagrama de entrada, conjunto de palavras procuradas diferente).</td>
+</tr></tbody></table>
+
+<p>Releia, se necessário, as instruções para fazer os testes em <a href="https://www.ic.unicamp.br/~mc102/labs/testes-susy.html">Testes com o SuSy</a>.</p>
+
+<h2 id="dicas">Dicas de Python 3 para esta tarefa:</h2>
+
+<ul>
+  <li><p>Os diagramas de entrada e saída poderão ser
+    armazenados como uma lista de lista de caracteres.</p>
+
+  </li><li><p>O código abaixo lê uma lista de caracteres da entrada:
+    </p><pre><code>l = input().split()</code></pre>
+
+  </li><li><p>O código abaixo cria um diagrama vazio e em seguida
+  adiciona a lista <code>l</code> a este diagrama:</p>
+
+    <pre><code>diagrama_entrada = []
+diagrama_entrada.append(l)</code></pre>
+	
+  </li><li><p>Você poderá utilizar a
+  função <code>isdigit()</code> para verificar se uma linha da
+  entrada é um número ou uma lista de caracteres: </p>
+    <pre><code>l = input()
+if l.isdigit() :
+    n = int(l)
+else :
+    l = l.split()</code></pre>
+
+  </li><li><p>Para criar um diagrama base para a saída de
+  dimensões <code>largura × altura</code> você pode
+  utilizar:</p>
+
+<pre><code>diagrama_saida = [["." for x in range(largura)] for y in range(altura)]</code></pre>
+
+  </li><li><p>Recomenda-se a escrita de funções para
+  estruturar o seu programa.</p>
+  
+  </li><li><p><b>O uso de bibliotecas em Python para resolver esta tarefa
+  é permitido desde que o pacote esteja instalado no SuSy.</b></p>
+      
+</li></ul>
+
+<h2>Orientações para submissão</h2>
+
+<p>Veja <a href="https://susy.ic.unicamp.br:9999/mc102/09">aqui</a> a página de submissão da tarefa. O arquivo a ser submetido deve se chamar <b><tt>lab09.py</tt></b>. No link <a href="https://susy.ic.unicamp.br:9999/mc102/09/aux/aux.html">Arquivos auxiliares</a> há um arquivo <code><a href="https://www.ic.unicamp.br/~mc102/labs/aux09.zip">aux09.zip</a></code> que contém todos os arquivos de testes abertos e seus respectivos resultados compactados.</p>
+
+<p>O limite máximo será de 20 submissões. Serão considerados os resultados da última submissão.</p>
+
+<p>O peso desta tarefa é 3.</p>
+
+<p>O prazo final para submissão é 03/11/2019.</p>
+
+<p>A nota desta tarefa é proporcional ao número de testes que executaram corretamente, desde que o código esteja coerente com o enunciado. <b>A submissão de um código que não implementa o algoritmo requisitado, mas que exibe as saídas esperadas dos testes abertos a partir da comparação de trechos da entrada será considerada fraude e acarretará a atribuição de nota zero à média final da disciplina.</b></p>
+
+<hr>
+
+
+
+</body></html>

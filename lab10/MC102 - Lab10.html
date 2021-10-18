@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<!-- saved from url=(0056)https://www.ic.unicamp.br/~mc102/labs/roteiro-lab10.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    
+    <title>MC102 - Lab10</title>
+
+    <link rel="stylesheet" type="text/css" href="./MC102 - Lab10_files/2s2019-mc102.css">
+
+</head>
+
+<body class="vsc-initialized">
+ 
+<header>
+    MC102 - Algoritmos e Programação de Computadores
+</header>
+
+<div class="topnav">
+  <a href="https://www.ic.unicamp.br/~mc102/index.html"><b>MC102</b></a>
+  <a href="https://www.ic.unicamp.br/~mc102/horarios.html"><b>Horários</b></a>
+  <a href="https://www.ic.unicamp.br/~mc102/pdd.html"><b>Plano de<br>desenvolvimento</b></a>
+  <a href="https://www.ic.unicamp.br/~mc102/plano.html"><b>Plano de<br>aulas</b></a>          
+  <a href="https://www.ic.unicamp.br/~mc102/oferecimentos.html"><b>Oferecimentos<br>anteriores</b></a>
+</div>
+
+<h1> <img src="./MC102 - Lab10_files/pagerank.png" class="left" padding="10px">PageRank</h1>
+
+<p>Uma página Web pode ser considerada relevante por uma máquina de busca se várias páginas apontam para ela e/ou se ela é referenciada por outras páginas relevantes. Este é o princípio por trás da métrica <a href="https://pt.wikipedia.org/wiki/PageRank">PageRank</a>, desenvolvida pela universidade de Stanford e utilizada, com variações, pelo Google.</p> 
+
+<p>Nesta tarefa, trabalharemos com uma estrutura simplificada da Web em que teremos apenas informações sobre identificadores de páginas e links. As páginas serão identificadas por letras e um link de uma página <code>A</code> para uma página <code>B</code> será indicado por <code>A -&gt; B</code>. Os cálculos dos valores de PageRank serão feitos de maneira iterativa.</p>
+
+<p><b>Valor inicial:</b> O valor inicial <code>PR<sub>0</sub>(id_pag)</code> é <math>1/N</math>, onde N é o número de identificadores das páginas na rede.</p> 
+
+<p><b>Fator de amortecimento:</b> o algoritmo estabelece um valor <code>d</code> para indicar a probabilidade de um usuário seguir um link a partir da página atual ao invés de digitar um novo endereço Web no navegador. O fator de amortecimento garante que páginas sem nenhum link para elas possam ter uma probabilidade mínima <code><math>(1-d)/N</math></code> de acesso. Nesta tarefa, adotaremos <code>d = 0.875</code> para todos os exemplos e testes.</p> 
+
+<p><b>Número de links:</b> O número de links de saída uma página <code>N_Links(id_pag)</code> reflete o número de páginas distintas apontadas por <code>id_pag</code>. Para o cálculo do PageRank, links de uma página para ela mesma serão desconsiderados. Em caso de múltiplos links de uma página para outra, apenas o primeiro será considerado.</p>
+
+<p><b>Passo:</b> O valor de PageRank de uma página no passo <code>i</code> (<code>PR<sub>i</sub>(id_pag)</code>) será calculado a partir dos valores <code>PR<sub>i-1</sub></code> das páginas <code>id_pag_link</code> que apontam para <code>id_pag</code> de acordo com a fórmula abaixo:</p>
+
+<p><code></code></p><pre><code><math>PR</math><sub>i</sub>(id_pag) = (1 - d)/N + d * <span style="font-size:175%">∑</span> PR<sub>i-1</sub>(id_pag_link)/N_Links(id_pag_link)</code>  </pre><p></p>  
+
+<p><b>Exemplo:</b> Observe na tabela abaixo os links e a rede que representam a figura ilustrativa da tarefa, os valores iniciais de PageRank, os valores do primeiro passo e os valores estáveis: </p>
+  
+<table style="padding:20px">
+  <tbody><tr>
+    <th>Links</th>
+    <th>Rede</th>
+    <th>PageRank<br>Inicial</th>
+    <th>PageRank<br>Passo 1</th>
+    <th>...</th>    
+    <th>PageRank<br>Final</th>    
+  </tr><tr>
+    <td><code><pre>A -&gt; B
+B -&gt; A
+C -&gt; A
+C -&gt; F
+D -&gt; A
+D -&gt; C
+D -&gt; E
+E -&gt; A
+E -&gt; D
+G -&gt; A
+G -&gt; D
+H -&gt; A
+H -&gt; D
+I -&gt; A
+I -&gt; D
+J -&gt; D
+K -&gt; D</pre></code></td>
+    <td><img src="./MC102 - Lab10_files/k.jpg"></td>
+<td><code><pre>A: 0.091
+B: 0.091
+C: 0.091
+D: 0.091
+E: 0.091
+F: 0.091
+G: 0.091
+H: 0.091
+I: 0.091
+J: 0.091
+K: 0.091</pre></code></td>
+<td><code><pre>A: 0.316
+B: 0.091
+C: 0.038
+D: 0.330
+E: 0.038
+F: 0.051
+G: 0.011
+H: 0.011
+I: 0.011
+J: 0.011
+K: 0.011</pre><code></code></code></td>
+<td></td>
+    <td><code><pre>A: 0.333
+B: 0.304
+C: 0.028
+D: 0.059
+E: 0.028
+F: 0.024
+G: 0.011
+H: 0.011
+I: 0.011
+J: 0.011
+K: 0.011</pre></code></td>
+   </tr>
+</tbody></table>
+
+<p>Considerando ainda o exemplo acima, podemos analisar como foi feito o cálculo de <code>PR<sub>1</sub>(A)</code>:</p>
+
+<code><pre>Páginas que apontam para A: B C D E G H I
+    
+PR<sub>1</sub>(A) = (1 - d)/N + d * (PR<sub>0</sub>(B)/N_links(B) + PR<sub>0</sub>(C)/N_links(C) +
+      PR<sub>0</sub>(D)/N_links(D) + PR<sub>0</sub>(E)/N_links(E) + PR<sub>0</sub>(G)/N_links(G) + 
+      PR<sub>0</sub>(H)/N_links(H) + PR<sub>0</sub>(I)/N_links(I))
+    
+N = 11
+d = 0.875
+PR<sub>0</sub>(B) = PR<sub>0</sub>(C) = PR<sub>0</sub>(D) = PR<sub>0</sub>(E) = PR<sub>0</sub>(G) = PR<sub>0</sub>(H) = PR<sub>0</sub>(I) = 0.091
+N_links(B) = 1
+N_links(C) = N_links(E) = N_links(G) = N_links(H) = N_links(I) = 2    
+N_links(D) = 3
+
+PR<sub>1</sub>(A) = (1 - 0.875)/11 + 0.875 * (0.091/1 + 0.091/2 +
+      0.091/3 + 0.091/2 + 0.091/2 + 
+      0.091/2 + 0.091/2) = 0.316</pre></code>
+  
+<p><b>Número de passos:</b> Podemos determinar se os valores estabilizaram verificando se as variações de PageRank de um passo para outro são nulas ou mínimas. Nesta tarefa, não iremos adotar esta abordagem, mas sim efetuar um número pré-estabelecido de passos.</p>
+
+<h2>Descrição da entrada</h2>
+
+<p>A primeira linha conterá a lista de identificadores de páginas, separados por espaços em branco. As linhas seguintes conterão zero ou mais links no formato indicado e a última linha conterá o número de passos a serem calculados. O esquema geral está descrito abaixo:</p>
+
+<code><pre>&lt;id_pag<sub>1</sub>&gt; &lt;id_pag<sub>2</sub>&gt; ... &lt;id_pag<sub>n</sub>&gt;
+&lt;id_pag_orig<sub>1</sub>&gt; -&gt; &lt;id_pag_dest<sub>1</sub>&gt;
+&lt;id_pag_orig<sub>2</sub>&gt; -&gt; &lt;id_pag_dest<sub>2</sub>&gt;
+...
+&lt;id_pag_orig<sub>m</sub>&gt; -&gt; &lt;id_pag_dest<sub>m</sub>&gt;
+&lt;num_passos&gt;
+</pre></code>
+
+<p>Um exemplo com quatro páginas, quatro links e dois passos seria:</p>
+
+<code><pre>A B C D 
+A -&gt; B
+B -&gt; C
+B -&gt; D
+C -&gt; D
+2</pre></code>
+
+<h2>Descrição da saída</h2>
+
+<p>A primeira parte da saída descreverá as ligações entre as páginas de maneira resumida. Para cada página com identificador <code>&lt;id_pag&gt;</code>, em ordem alfabética, será gerado um par de linhas no formato abaixo. A primeira linha contém o identificador <code>&lt;id_pag&gt;</code>, o símbolo <code>-&gt;</code> e  a lista de páginas para as quais <code>&lt;id_pag&gt;</code> aponta. A segunda linha contém a lista de páginas que apontam para <code>&lt;id_pag&gt;</code>, o símbolo <code>-&gt;</code> e o identificador <code>&lt;id_pag&gt;</code>. Note que na apresentação destas listas não devem aparecer múliplos links nem links de uma página para ela mesma.</p>
+  
+<code><pre>&lt;id_pag&gt; -&gt; [ ]
+[ ] -&gt; &lt;id_pag&gt;      
+</pre></code>
+
+<p>A segunda parte conterá os valores de PageRank calculados para cada passo do algoritmo. As páginas deverão aparecer em ordem alfabética e os valores de PageRank formatados com três casas decimais. </p>
+
+<code><pre>PageRank (passo &lt;i&gt;)
+&lt;id_pag<sub>1</sub>&gt;: &lt;PR<sub>i</sub>(&lt;id_pag<sub>1</sub>)&gt;
+&lt;id_pag<sub>2</sub>&gt;: &lt;PR<sub>i</sub>(&lt;id_pag<sub>2</sub>)&gt;
+...
+</pre></code>    
+
+<p>Para o exemplo da seção anterior, a saída será:</p>
+
+<pre><code>A -&gt; ['B']
+[] -&gt; A
+B -&gt; ['C', 'D']
+['A'] -&gt; B
+C -&gt; ['D']
+['B'] -&gt; C
+D -&gt; []
+['B', 'C'] -&gt; D
+PageRank (passo 0)
+A: 0.250
+B: 0.250
+C: 0.250
+D: 0.250
+PageRank (passo 1)
+A: 0.031
+B: 0.250
+C: 0.141
+D: 0.359
+PageRank (passo 2)
+A: 0.031
+B: 0.059
+C: 0.141
+D: 0.264</code></pre>
+
+<h2>Testes com o SuSy</h2>
+
+<p>O conjunto de testes será formado por nove testes abertos e um teste fechado. A tabela abaixo mostra detalhadamente os quatro primeiros testes abertos.</p>
+
+<table>
+  <tbody><tr>
+    <th>Teste</th><th>Links<br>Entrada</th><th>Rede</th>
+    <th>Lista<br>Links</th>
+    <th>PageRank</th>    
+  </tr><tr>
+    <th style="background-color:#333333">arq1.in</th>
+    <td></td>
+    <td><img src="./MC102 - Lab10_files/ab.jpg" <="" td="">    
+    </td><td><code></code><pre><code>A -&gt; []
+[] -&gt; A
+B -&gt; []
+[] -&gt; B</code></pre></td>
+    <td><code><pre>PageRank (passo 0)
+A: 0.500
+B: 0.500
+PageRank (passo 1)
+A: 0.062
+B: 0.062</pre></code></td>
+  </tr>
+  <tr>
+    <th style="background-color:gray">arq2.in</th>
+    <td><code></code><pre><code>A -&gt; B</code></pre></td>
+    <td><img src="./MC102 - Lab10_files/ab2.jpg" <="" td="">
+    </td><td><code></code><pre><code>A -&gt; ['B']
+[] -&gt; A
+B -&gt; []
+['A'] -&gt; B</code></pre></td>
+    <td><code></code><pre><code>PageRank (passo 0)
+A: 0.500
+B: 0.500
+PageRank (passo 1)
+A: 0.062
+B: 0.500
+PageRank (passo 2)
+A: 0.062
+B: 0.117</code></pre></td>    
+  </tr>
+  <tr>
+    <th style="background-color:#333333">arq3.in</th>
+    <td><code></code><pre><code>A -&gt; B
+B -&gt; A</code></pre></td>
+    <td><img src="./MC102 - Lab10_files/ab3.jpg" <="" td="">
+    </td><td><code></code><pre><code>A -&gt; ['B']
+['B'] -&gt; A
+B -&gt; ['A']
+['A'] -&gt; B</code></pre></td>
+    <td><code></code><pre><code>PageRank (passo 0)
+A: 0.500
+B: 0.500
+PageRank (passo 1)
+A: 0.500
+B: 0.500</code></pre></td>    
+  </tr>
+  <tr>
+    <th style="background-color:gray">arq4.in</th>
+    <td><code></code><pre><code>A -&gt; B
+C -&gt; B</code></pre></td>
+    <td><img src="./MC102 - Lab10_files/abc.jpg" <="" td="">
+    </td><td><code></code><pre><code>A -&gt; ['B']
+[] -&gt; A
+B -&gt; []
+['A', 'C'] -&gt; B
+C -&gt; ['B']
+[] -&gt; C </code></pre></td>
+    <td><code></code><pre><code>PageRank (passo 0)
+A: 0.333
+B: 0.333
+C: 0.333
+PageRank (passo 1)
+A: 0.050
+B: 0.617
+C: 0.050
+PageRank (passo 2)
+A: 0.050
+B: 0.135</code></pre></td>    
+  </tr>
+</tbody></table>
+
+<p>Releia, se necessário, as instruções para fazer os testes em <a href="https://www.ic.unicamp.br/~mc102/labs/testes-susy.html">Testes com o SuSy</a>.</p>
+
+<h2>Orientações para submissão</h2>
+
+<p>Veja <a href="https://susy.ic.unicamp.br:9999/mc102/10">aqui</a> a página de submissão da tarefa. O arquivo a ser submetido deve se chamar <b><tt>lab10.py</tt></b>. No link <a href="https://susy.ic.unicamp.br:9999/mc102/10/aux/aux.html">Arquivos auxiliares</a> há um arquivo <code><a href="https://www.ic.unicamp.br/~mc102/labs/aux10.zip">aux10.zip</a></code> que contém todos os arquivos de testes abertos e seus respectivos resultados compactados.</p>
+
+<p>O limite máximo será de 20 submissões. Serão considerados os resultados da última submissão.</p>
+
+<p>O peso desta tarefa é 4.</p>
+
+<p>O prazo final para submissão é 10/11/2019.</p>
+
+<p>A nota desta tarefa é proporcional ao número de testes que executaram corretamente, desde que o código esteja coerente com o enunciado. <b>A submissão de um código que não implementa o algoritmo requisitado, mas que exibe as saídas esperadas dos testes abertos a partir da comparação de trechos da entrada será considerada fraude e acarretará a atribuição de nota zero à média final da disciplina.</b></p>
+
+<hr>
+
+<small>A imagem que ilustra esta tarefa foi obtida
+em <a href="https://pt.wikipedia.org/wiki/PageRank">Wikipedia - PageRank</a>.</small>
+  
+
+
+
+</body></html>

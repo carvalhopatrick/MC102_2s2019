@@ -1,0 +1,96 @@
+/*
+ * CSS para as páginas de MC102, oferecimento 1s2019. 
+ */
+
+* { /* Padding e border são incluídos na altura e largura dos
+   elementos. Facilita a construção de responsive grid-views */
+    box-sizing: border-box;
+}
+
+body {
+    background: white-smoke;
+    font-family: arial;
+}
+
+header {
+    color:white;
+    background-color:#42bfb0;
+    font-family:courier;
+    font-size:300%;
+    text-align:center;
+    padding:10px;    
+}
+
+h1 {
+    font-family: courier;
+    border: 3px; 
+    border-bottom-style: solid;
+    color: black;
+    border-color: #770021;
+}
+
+h2, h3 {
+    font-family: courier;
+    border: 2px; 
+    border-bottom-style: solid;
+}
+
+table, td, th {
+    border: 1px solid #111111;
+    border-collapse: collapse;
+    padding: 4px;
+    margin: auto;
+}
+
+th {
+    color: white;
+    background-color: gray;
+}
+
+/* Style the top navigation bar */
+.topnav {
+    overflow: hidden;
+    font-family:courier;
+    font-size:120%;    
+    background-color: #770021;
+}
+
+code {
+    font-size:125%;
+    color: #025f50;
+}
+/* Style the topnav links */
+.topnav a {
+    float: left;
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+/* Change color on hover */
+.topnav a:hover {
+    background-color: #42bfb0;
+    color: white;
+}
+
+/* Style the content */
+.content {
+    background-color: #42bfb0;
+    padding: 10px;
+}
+
+hr {
+    color: #770021;  
+}    
+
+.left {
+float: left;
+padding: 0 20px 20px 0;
+}
+
+.right {
+float: right;
+padding: 0px 0px 20px 20px;
+}

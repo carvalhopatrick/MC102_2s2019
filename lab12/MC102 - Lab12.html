@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<!-- saved from url=(0069)https://www.ic.unicamp.br/~mc102/mc102-2s2019/labs/roteiro-lab12.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    
+    <title>MC102 - Lab12</title>
+
+    <link rel="stylesheet" type="text/css" href="./MC102 - Lab12_files/2s2019-mc102.css">
+
+    <style>
+    table#tab_csvnumber td {
+       vertical-align: top;
+       text-align: right;
+     </style>
+    </head><body class="vsc-initialized">}
+
+
+
+ 
+<header>
+    MC102 - Algoritmos e Programação de Computadores
+</header>
+
+<div class="topnav">
+  <a href="https://www.ic.unicamp.br/~mc102/mc102-2s2019/index.html"><b>MC102</b></a>
+  <a href="https://www.ic.unicamp.br/~mc102/mc102-2s2019/horarios.html"><b>Horários</b></a>
+  <a href="https://www.ic.unicamp.br/~mc102/mc102-2s2019/pdd.html"><b>Plano de<br>desenvolvimento</b></a>
+  <a href="https://www.ic.unicamp.br/~mc102/mc102-2s2019/plano.html"><b>Plano de<br>aulas</b></a>
+  <a href="https://www.ic.unicamp.br/~mc102/mc102-1s2019"><b>Oferecimento<br>anterior</b></a>    
+</div>
+
+<h1>ASC ART e Recursão</h1>
+
+<p>Nesta tarefa, vamos retornar ao tema ASC ART para exercitarmos recursão. A base para o nosso estudo será o 
+<a href="https://pt.wikipedia.org/wiki/Tri%C3%A2ngulo_de_Sierpinski">Triângulo de Sierpinski</a>. Ao analisarmos a figura abaixo, fica bem fácil entender o processo de criação deste fractal. A cada passo, um triângulo preto é subdividido em quatro triângulos de tamanho igual, o triângulo central é pintado de branco e os triângulos pretos serão subdivididos no passo seguinte.</p>
+
+<img src="./MC102 - Lab12_files/passos-Sierpinski.png">
+
+<br>
+
+<p>Observe agora alguns diagramas em ASC ART. Note que é possível, mesmo com resolução limitada, identificar a estrutura do desenho.</p>
+
+<code style="font-size:50%;color:black"><pre><b>                               *                                                                *                                                                *                                                                *                                 
+                              ***                                                              ***                                                              ***                                                              ***                                
+                             *****                                                            *****                                                            *****                                                            *****                               
+                            *******                                                          *******                                                          *******                                                          *******                              
+                           *********                                                        *********                                                        *********                                                        *       *                             
+                          ***********                                                      ***********                                                      ***********                                                      ***     ***                            
+                         *************                                                    *************                                                    *************                                                    *****   *****                           
+                        ***************                                                  ***************                                                  ***************                                                  ******* *******                          
+                       *****************                                                *****************                                                *               *                                                *               *                         
+                      *******************                                              *******************                                              ***             ***                                              ***             ***                        
+                     *********************                                            *********************                                            *****           *****                                            *****           *****                       
+                    ***********************                                          ***********************                                          *******         *******                                          *******         *******                      
+                   *************************                                        *************************                                        *********       *********                                        *       *       *       *                     
+                  ***************************                                      ***************************                                      ***********     ***********                                      ***     ***     ***     ***                    
+                 *****************************                                    *****************************                                    *************   *************                                    *****   *****   *****   *****                   
+                *******************************                                  *******************************                                  *************** ***************                                  ******* ******* ******* *******                  
+               *********************************                                *                               *                                *                               *                                *                               *                 
+              ***********************************                              ***                             ***                              ***                             ***                              ***                             ***                
+             *************************************                            *****                           *****                            *****                           *****                            *****                           *****               
+            ***************************************                          *******                         *******                          *******                         *******                          *******                         *******              
+           *****************************************                        *********                       *********                        *********                       *********                        *       *                       *       *             
+          *******************************************                      ***********                     ***********                      ***********                     ***********                      ***     ***                     ***     ***            
+         *********************************************                    *************                   *************                    *************                   *************                    *****   *****                   *****   *****           
+        ***********************************************                  ***************                 ***************                  ***************                 ***************                  ******* *******                 ******* *******          
+       *************************************************                *****************               *****************                *               *               *               *                *               *               *               *         
+      ***************************************************              *******************             *******************              ***             ***             ***             ***              ***             ***             ***             ***        
+     *****************************************************            *********************           *********************            *****           *****           *****           *****            *****           *****           *****           *****       
+    *******************************************************          ***********************         ***********************          *******         *******         *******         *******          *******         *******         *******         *******      
+   *********************************************************        *************************       *************************        *********       *********       *********       *********        *       *       *       *       *       *       *       *     
+  ***********************************************************      ***************************     ***************************      ***********     ***********     ***********     ***********      ***     ***     ***     ***     ***     ***     ***     ***    
+ *************************************************************    *****************************   *****************************    *************   *************   *************   *************    *****   *****   *****   *****   *****   *****   *****   *****   
+***************************************************************  ******************************* *******************************  *************** *************** *************** ***************  ******* ******* ******* ******* ******* ******* ******* *******</b></pre></code>      
+
+<h2>Elementos do desenho</h2>
+
+<ul>
+  <li><p><b>Triângulo base:</b> O desenho é formado a partir de um triângulo base, pintado de preto no desenho original. Em ASC ART, utilizaremos triângulos isósceles e algum caractere para substituir a cor preta. Para facilitar a divisão dos triângulos ao longo dos passos, trabalharemos apenas com triângulos cuja altura seja uma potência de 2 (<code>altura = 2<sup>N</sup></code>). A ponta do triângulo terá apenas um caractere, a segunda linha, se houver, terá três caracteres e assim sucessivamente até a base do triângulo, que terá <code>2 * altura - 1</code> caracteres. Observe os exemplos abaixo:</p>
+
+<table>
+  <tbody><tr>
+    <td style="text-align:center"><code>altura = 2<sup>0</sup></code></td>
+    <td style="text-align:center"><code>altura = 2<sup>1</sup></code></td>
+    <td style="text-align:center"><code>altura = 2<sup>2</sup></code></td>            
+    <td style="text-align:center"><code>altura = 2<sup>3</sup></code></td>
+  </tr>
+  <tr>
+    <td><code><pre>       @        
+</pre></code></td>
+    <td><code><pre>       +        
+      +++       
+</pre></code></td>
+    <td><code><pre>       X        
+      XXX       
+     XXXXX     
+    XXXXXXX   
+</pre></code></td>
+    <td><code><pre>        *        
+       ***       
+      *****     
+     *******   
+    *********  
+   ***********   
+  *************  
+ ***************</pre></code></td>
+  </tr>
+</tbody></table>
+
+  </li><li><p><b>Triângulos brancos:</b> Os triângulos brancos terão a mesma forma que o triângulo preto, mas serão desenhados com a ponta para baixo.</p>
+    
+  </li><li><p><b>Tela e moldura:</b> Os desenhos deverão ser preparados em uma matriz de caracteres, denominada tela, e depois escritos na saída. A tela deverá ser uma matriz retangular com a mesma altura e largura do triângulo base. Ao escrever a matriz, você deverá acrescentar um contorno de caracteres em branco e uma moldura feita com caracteres "-", "|" e "+", como no exemplo abaixo:</p>
+
+<code><pre>+-----------------+
+|                 |
+|        *        |
+|       ***       |
+|      *****      |
+|     *******     |
+|    *       *    |
+|   ***     ***   |
+|  *****   *****  |
+| ******* ******* |
+|                 |
++-----------------+</pre></code>    
+
+</li><li><p><b>Profundidade da recursão:</b> Em um fractal, não há limites para as subdivisões. Nesta tarefa, indicaremos o número de subdivisões, que deve ser sempre menor ou igual ao valor de <code>log<sub>2</sub>(altura)</code>, sendo <code>altura</code> a altura do triângulo base.</p>
+
+<table>
+  <tbody><tr>
+    <td style="text-align:center"><code>altura = 2<sup>4</sup><br>p=0</code></td>
+    <td style="text-align:center"><code>altura = 2<sup>4</sup><br>p=1</code></td>
+    <td style="text-align:center"><code>altura = 2<sup>4</sup><br>p=2</code></td>            
+  </tr>
+  <tr>
+    <td><code><pre>+---------------------------------+
+|                                 |
+|                *                |
+|               ***               |
+|              *****              |
+|             *******             |
+|            *********            |
+|           ***********           |
+|          *************          |
+|         ***************         |
+|        *****************        |
+|       *******************       |
+|      *********************      |
+|     ***********************     |
+|    *************************    |
+|   ***************************   |
+|  *****************************  |
+| ******************************* |
+|                                 |
++---------------------------------+</pre></code></td>
+<td><code></code><pre><code>+---------------------------------+
+|                                 |
+|                *                |
+|               ***               |
+|              *****              |
+|             *******             |
+|            *********            |
+|           ***********           |
+|          *************          |
+|         ***************         |
+|        *               *        |
+|       ***             ***       |
+|      *****           *****      |
+|     *******         *******     |
+|    *********       *********    |
+|   ***********     ***********   |
+|  *************   *************  |
+| *************** *************** |
+|                                 |
++---------------------------------+</code></pre></td>
+<td><code><pre>+---------------------------------+
+|                                 |
+|                *                |
+|               ***               |
+|              *****              |
+|             *******             |
+|            *       *            |
+|           ***     ***           |
+|          *****   *****          |
+|         ******* *******         |
+|        *               *        |
+|       ***             ***       |
+|      *****           *****      |
+|     *******         *******     |
+|    *       *       *       *    |
+|   ***     ***     ***     ***   |
+|  *****   *****   *****   *****  |
+| ******* ******* ******* ******* |
+|                                 |
++---------------------------------+</pre></code>
+</td></tr></tbody></table>    
+
+  <p></p>
+  
+<table>
+  <tbody><tr>
+    <td style="text-align:center"><code>altura = 2<sup>4</sup><br>p=3</code></td>
+    <td style="text-align:center"><code>altura = 2<sup>4</sup><br>p=4</code></td>
+  </tr>
+  <tr>
+    <td><code><pre>+---------------------------------+
+|                                 |
+|                *                |
+|               ***               |
+|              *   *              |
+|             *** ***             |
+|            *       *            |
+|           ***     ***           |
+|          *   *   *   *          |
+|         *** *** *** ***         |
+|        *               *        |
+|       ***             ***       |
+|      *   *           *   *      |
+|     *** ***         *** ***     |
+|    *       *       *       *    |
+|   ***     ***     ***     ***   |
+|  *   *   *   *   *   *   *   *  |
+| *** *** *** *** *** *** *** *** |
+|                                 |
++---------------------------------+</pre></code></td>
+<td><code><pre>+---------------------------------+
+|                                 |
+|                *                |
+|               * *               |
+|              *   *              |
+|             * * * *             |
+|            *       *            |
+|           * *     * *           |
+|          *   *   *   *          |
+|         * * * * * * * *         |
+|        *               *        |
+|       * *             * *       |
+|      *   *           *   *      |
+|     * * * *         * * * *     |
+|    *       *       *       *    |
+|   * *     * *     * *     * *   |
+|  *   *   *   *   *   *   *   *  |
+| * * * * * * * * * * * * * * * * |
+|                                 |
++---------------------------------+</pre></code></td>
+</tr></tbody></table>
+
+</li></ul>
+
+<h2>Descrição da entrada</h2>
+
+<p>A entrada será formada por três valores:</p>
+
+<code></code><pre><code>&lt;N&gt;
+&lt;p&gt;
+&lt;char_preto&gt;</code></pre>
+
+<p>A altura do triângulo base e da tela será definida por <code>2<sup>N</sup></code>. O inteiro <code>p</code> indicará o número de subdivisões e o caractere <code>&lt;char_preto&gt;</code> indicará o caractere que preencherá o triângulo base.</p>
+
+
+<h2>Descrição da saída</h2>
+
+<p>A saída será formada por um único desenho de um triângulo isósceles de <code>altura = 2<sup>N</sup></code> e <code>largura = 2 * altura - 1</code> caracteres do tipo <code>&lt;char_preto&gt;</code>. O triângulo deverá apresentar <code>p</code> subdivisões do Triângulo de Sierpinski e o desenho deverá estar emoldurado como exemplificado acima.</p>
+
+<h2>Testes com o SuSy</h2>
+
+<p>O conjunto de testes será formado por 7 testes abertos e 3 testes fechados. Os testes fechados são variações dos testes abertos em que só foram alterados os caracteres utilizados para desenho. Releia, se necessário, as instruções para fazer os testes em <a href="https://www.ic.unicamp.br/~mc102/mc102-2s2019/labs/testes-susy.html">Testes com o SuSy</a>.</p>
+
+<h2>Dicas para a implementação</h2>
+
+<p>Esta tarefa ficará simples de ser implementada se você subdividí-la em problemas menores, que devem ser desenvolvidos e testados
+separadamente. Veja a sugestão abaixo:</p>
+
+  <ul>
+    <li><p>Desenvolva uma função para criar a <code>tela</code> em branco. Você pode usar o comando:</p>
+      <code>tela = [ [" " for j in range(largura)] for i in range(altura)]</code>
+    </li><li><p>Desenvolva uma função <code>print_tela_com_moldura()</code> para escrever esta <code>tela</code> com a moldura solicitada na saída.</p>
+    </li><li><p>Desenvolva uma função que desenha o triângulo base na <code>tela</code>. Teste a saída com a função <code>print_tela_com_moldura()</code>.</p>      
+    </li><li><p>Desenvolva uma função que desenha um triângulo branco a
+    partir de coordenadas <code>x,y</code> na <code>tela</code>. Teste
+    a saída com a função <code>print_tela_com_moldura()</code>.</p>
+
+    </li><li><p>Organize as chamadas recursivas para o desenho dos triângulos em branco. Durante o desenvolvimento, acrescente chamadas extras à função <code>print_tela_com_moldura()</code> de maneira que você possa acompanhar o caminho que está sendo percorrido. Observe os primeiros desenhos  para <code>N = 4, p = 4, char_preto = "+"</code> em que começamos a subdivisão pelos triângulos inferiores à esquerda:</p>  
+
+<code style="font-size:50%"><pre>+---------------------------------+
+|                                 |
+|                +                |
+|               +++               |
+|              +++++              |
+|             +++++++             |
+|            +++++++++            |
+|           +++++++++++           |
+|          +++++++++++++          |
+|         +++++++++++++++         |
+|        +++++++++++++++++        |
+|       +++++++++++++++++++       |
+|      +++++++++++++++++++++      |
+|     +++++++++++++++++++++++     |
+|    +++++++++++++++++++++++++    |
+|   +++++++++++++++++++++++++++   |
+|  +++++++++++++++++++++++++++++  |
+| +++++++++++++++++++++++++++++++ |
+|                                 |
++---------------------------------+
++---------------------------------+
+|                                 |
+|                +                |
+|               +++               |
+|              +++++              |
+|             +++++++             |
+|            +++++++++            |
+|           +++++++++++           |
+|          +++++++++++++          |
+|         +++++++++++++++         |
+|        +               +        |
+|       +++             +++       |
+|      +++++           +++++      |
+|     +++++++         +++++++     |
+|    +++++++++       +++++++++    |
+|   +++++++++++     +++++++++++   |
+|  +++++++++++++   +++++++++++++  |
+| +++++++++++++++ +++++++++++++++ |
+|                                 |
++---------------------------------+
++---------------------------------+
+|                                 |
+|                +                |
+|               +++               |
+|              +++++              |
+|             +++++++             |
+|            +++++++++            |
+|           +++++++++++           |
+|          +++++++++++++          |
+|         +++++++++++++++         |
+|        +               +        |
+|       +++             +++       |
+|      +++++           +++++      |
+|     +++++++         +++++++     |
+|    +       +       +++++++++    |
+|   +++     +++     +++++++++++   |
+|  +++++   +++++   +++++++++++++  |
+| +++++++ +++++++ +++++++++++++++ |
+|                                 |
++---------------------------------+
++---------------------------------+
+|                                 |
+|                +                |
+|               +++               |
+|              +++++              |
+|             +++++++             |
+|            +++++++++            |
+|           +++++++++++           |
+|          +++++++++++++          |
+|         +++++++++++++++         |
+|        +               +        |
+|       +++             +++       |
+|      +++++           +++++      |
+|     +++++++         +++++++     |
+|    +       +       +++++++++    |
+|   +++     +++     +++++++++++   |
+|  +   +   +++++   +++++++++++++  |
+| +++ +++ +++++++ +++++++++++++++ |
+|                                 |
++---------------------------------+
++---------------------------------+
+|                                 |
+|                +                |
+|               +++               |
+|              +++++              |
+|             +++++++             |
+|            +++++++++            |
+|           +++++++++++           |
+|          +++++++++++++          |
+|         +++++++++++++++         |
+|        +               +        |
+|       +++             +++       |
+|      +++++           +++++      |
+|     +++++++         +++++++     |
+|    +       +       +++++++++    |
+|   +++     +++     +++++++++++   |
+|  +   +   +++++   +++++++++++++  |
+| + + +++ +++++++ +++++++++++++++ |
+|                                 |
++---------------------------------+</pre></code>      
+
+</li><li><p>Para aumentar sua compreensão sobre as chamadas recursivas, troque a ordem das chamadas e compare os caminhos percorridos.</p>
+  </li></ul>
+  
+<h2>Orientações para submissão</h2>
+
+<p>Veja <a href="https://susy.ic.unicamp.br:9999/mc102/12">aqui</a> a página de submissão da tarefa. O arquivo a ser submetido deve se chamar <b><tt>lab12.py</tt></b>. No link <a href="https://susy.ic.unicamp.br:9999/mc102/12/aux/aux.html">Arquivos auxiliares</a> há um arquivo <code><a href="https://www.ic.unicamp.br/~mc102/mc102-2s2019/labs/aux12.zip">aux12.zip</a></code> que contém todos os arquivos de testes abertos e seus respectivos resultados compactados.</p>
+
+<p>O limite máximo será de 20 submissões. Serão considerados os resultados da última submissão.</p>
+
+<p>O peso desta tarefa é 3.</p>
+
+<p>O prazo final para submissão é 30/11/2019.</p>
+
+<p>A nota desta tarefa é proporcional ao número de testes que executaram corretamente, desde que o código esteja coerente com o enunciado. <b>A submissão de um código que não implementa o algoritmo requisitado, mas que exibe as saídas esperadas dos testes abertos a partir da comparação de trechos da entrada será considerada fraude e acarretará a atribuição de nota zero à média final da disciplina.</b></p>
+  
+<hr>
+
+<small><p>A imagem que ilustra os passos do algoritmo de Sierpinski foi obtida verberte referente ao <a href="https://pt.wikipedia.org/wiki/Tri%C3%A2ngulo_de_Sierpinski">Triângulo de Sierpinski</a> na Wikipedia. Todos os outros desenhos foram obtidos a partir de programas em Python.</p></small>
+
+
+
+
+
+</body></html>

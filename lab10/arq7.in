@@ -1,0 +1,10 @@
+A B C D E
+A -> A
+A -> B
+B -> C
+C -> A
+A -> D
+D -> A
+E -> D
+E -> D
+7

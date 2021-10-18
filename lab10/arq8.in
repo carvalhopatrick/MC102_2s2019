@@ -1,0 +1,21 @@
+A B C D E F G H I
+A -> B
+B -> A
+B -> B
+C -> A
+C -> F
+D -> A
+D -> B
+D -> C
+D -> E
+E -> A
+E -> D
+G -> A
+G -> D
+H -> A
+H -> D
+I -> A
+I -> D
+E -> A
+I -> A
+5
